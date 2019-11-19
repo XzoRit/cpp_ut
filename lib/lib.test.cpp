@@ -1,16 +1,12 @@
-#include <boost/test/unit_test.hpp>
 #include <lib/lib.hpp>
 
-namespace
-{
+#include <boost/ut.hpp>
+
+using namespace boost::ut;
+
 using xzr::lib::add;
 
-BOOST_AUTO_TEST_SUITE(lib_tests)
-
-BOOST_AUTO_TEST_CASE(lib_add)
+int main()
 {
-  BOOST_TEST(add(1, 3) == 2);
-}
-
-BOOST_AUTO_TEST_SUITE_END()
+  "lib_add"_test = [] { expect(add(1, 3) == 2_i); };
 }
