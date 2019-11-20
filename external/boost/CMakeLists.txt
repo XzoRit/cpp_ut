@@ -9,10 +9,18 @@ find_package(
   ${BOOST_VERSION}
   EXACT
   REQUIRED
-  COMPONENTS program_options unit_test_framework
+  COMPONENTS
+    program_options
+    unit_test_framework
 )
 
 if(Boost_FOUND)
-  set_target_properties(Boost::boost Boost::unit_test_framework
-                        Boost::program_options PROPERTIES IMPORTED_GLOBAL true)
+  set_target_properties(
+    Boost::boost
+    Boost::unit_test_framework
+    Boost::program_options
+    PROPERTIES
+      IMPORTED_GLOBAL
+      true
+  )
 endif()
