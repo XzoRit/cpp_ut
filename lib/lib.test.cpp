@@ -1,5 +1,6 @@
 #include <lib/lib.hpp>
 
+#include <cassert>
 #include <vector>
 
 #include <boost/ut.hpp>
@@ -66,6 +67,18 @@ boost::ut::suite ut_sections = [] {
     v.resize(0);
     expect(std::size(v) == 0_u);
   };
+};
+
+boost::ut::suite ut_exceptions_abort = [] {
+  using namespace boost::ut;
+
+  "exceptions"_test = [] {
+    expect(throws<std::runtime_error>([] { throw std::runtime_error(""); })) << "throws runtime_error";
+    expect(throws([] { throw 0; })) << "throws any exception";
+    expect(nothrow([] {})) << "does not throw";
+  };
+
+  "aborts"_test = [] { expect(aborts([] { assert(false); })); };
 };
 
 boost::ut::suite lib_tests = [] {
