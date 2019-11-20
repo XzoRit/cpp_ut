@@ -8,7 +8,7 @@ namespace
 {
 constexpr auto sum = [](auto... args) { return (0 + ... + args); };
 
-boost::ut::suite ut_demo = [] {
+boost::ut::suite ut_assertions = [] {
   using namespace boost::ut;
 
   "operator"_test = [] {
@@ -45,6 +45,26 @@ boost::ut::suite ut_demo = [] {
   "failure"_test = [] {
       expect(1_i == 2) << "should fail";
       expect(sum() == 1_i or 2_i == sum()) << "sum?";
+  };
+};
+
+boost::ut::suite ut_sections = [] {
+  using namespace boost::ut;
+
+  std::vector<int> v(5);
+
+  !expect(std::size(v) == 5_u);
+
+  "resize bigger"_test = [=]() mutable {
+    v.resize(10);
+    expect(std::size(v) == 10_u);
+  };
+
+  !expect(std::size(v) == 5_u);
+
+  "resize smaller"_test = [=]() mutable {
+    v.resize(0);
+    expect(std::size(v) == 0_u);
   };
 };
 
