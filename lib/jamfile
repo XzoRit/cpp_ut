@@ -30,7 +30,7 @@ boost.use-project
 import testing
     ;
 
-run lib.test.cpp
+run $(test_sources)
     :
     :
     : <library>lib

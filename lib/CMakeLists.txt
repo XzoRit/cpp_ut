@@ -23,6 +23,7 @@ add_executable(lib_test)
 target_sources(
   lib_test
   PRIVATE
+  "main.test.cpp"
   "lib.test.cpp"
 )
 target_link_libraries(

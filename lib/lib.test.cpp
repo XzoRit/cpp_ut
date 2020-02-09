@@ -1,11 +1,11 @@
 #include <lib/lib.hpp>
 
+#include <boost/ut.hpp>
+
 #include <cassert>
 #include <tuple>
 #include <type_traits>
 #include <vector>
-
-#include <boost/ut.hpp>
 
 namespace {
 using namespace boost::ut;
