@@ -1,0 +1,17 @@
+name: C/C++ CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+    - name: configure
+      run: mkdir build_cmake && cmake -B ./build_cmake -S ./
+    - name: build
+      run: cmake --build ./build_cmake
+    - name: test
+      run: cd build_cmake && ctest --output-on-failure
