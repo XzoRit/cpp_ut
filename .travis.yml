@@ -16,14 +16,6 @@ install:
   - mkdir -p ${DEPS_DIR} && cd ${DEPS_DIR}
 
   ############################################################################
-  # Setup default versions and override CXX set by Travis if needed
-  ############################################################################
-  - if [[ "${CC_COMPILER}" != "" ]]; then export CC=${CC_COMPILER}; fi
-  - if [[ "${CXX_COMPILER}" != "" ]]; then export CXX=${CXX_COMPILER}; fi
-  - ${CC} --version
-  - ${CXX} --version
-
-  ############################################################################
   # Install Boost headers
   ############################################################################
   - |
@@ -63,31 +55,6 @@ install:
   - export BOOST_ROOT=${BOOST_DIR}
   - b2 --version || true # b2 --version returns 1
 
-  ############################################################################
-  # Install libc++ and libc++abi if needed
-  ############################################################################
-  - |
-    if [[ "${CXX%%+*}" == "clang" ]]; then
-      if [[ "${CXX}" == "clang++-7" ]]; then LLVM_VERSION="7.1.0";
-      fi
-
-      LLVM_URL="http://llvm.org/releases/${LLVM_VERSION}/llvm-${LLVM_VERSION}.src.tar.xz"
-      LIBCXX_URL="http://llvm.org/releases/${LLVM_VERSION}/libcxx-${LLVM_VERSION}.src.tar.xz"
-      LIBCXXABI_URL="http://llvm.org/releases/${LLVM_VERSION}/libcxxabi-${LLVM_VERSION}.src.tar.xz"
-
-      mkdir -p llvm llvm/build llvm/projects/libcxx llvm/projects/libcxxabi
-      travis_retry wget -O - ${LLVM_URL} | tar --strip-components=1 -xJ -C llvm || exit 1
-      travis_retry wget -O - ${LIBCXX_URL} | tar --strip-components=1 -xJ -C llvm/projects/libcxx || exit 1
-      travis_retry wget -O - ${LIBCXXABI_URL} | tar --strip-components=1 -xJ -C llvm/projects/libcxxabi || exit 1
-      (cd llvm/build && cmake .. -DCMAKE_INSTALL_PREFIX=${DEPS_DIR}/llvm/install) || exit 1
-      (cd llvm/build/projects/libcxx && make install -j2) || exit 1
-      (cd llvm/build/projects/libcxxabi && make install -j2) || exit 1
-
-      export CXXFLAGS="-isystem ${DEPS_DIR}/llvm/install/include/c++/v1"
-      export LDFLAGS="-L ${DEPS_DIR}/llvm/install/lib -l c++ -l c++abi"
-      export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${DEPS_DIR}/llvm/install/lib"
-    fi
-
 before_script:
   ############################################################################
   # Build needed boost libs
@@ -97,12 +64,7 @@ before_script:
   # formulated in the according jamfiles
   ############################################################################
   - cd ${BOOST_DIR}
-  - |
-    if [[ "${LDFLAGS}" == "" ]]; then
-      b2 --with-program_options --with-test toolset=${TOOLSET} cxxflags="-std=c++17 ${CXXFLAGS}" || exit 1
-    else
-      b2 --with-program_options --with-test toolset=${TOOLSET} cxxflags="-std=c++17 ${CXXFLAGS}" linkflags="${LDFLAGS}" || exit 1
-    fi
+  - b2 --with-program_options toolset=${TOOLSET} cxxflags="-std=c++17"
 
   ############################################################################
   # Go back to the root of the project and setup the build directory
@@ -143,9 +105,4 @@ script:
   # Build and execute tests with b2
   ############################################################################
   - cd "${TRAVIS_BUILD_DIR}"
-  - |
-    if [[ "${LDFLAGS}" == "" ]]; then
-      b2 --build-dir=./build_boost toolset=${TOOLSET} cxxflags="-std=c++17 ${CXXFLAGS}"
-    else
-      b2 --build-dir=./build_boost toolset=${TOOLSET} cxxflags="-std=c++17 ${CXXFLAGS}" linkflags="${LDFLAGS}"
-    fi
+  - b2 --build-dir=./build_boost toolset=${TOOLSET} cxxflags="-std=c++17"
