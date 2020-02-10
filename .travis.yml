@@ -16,6 +16,14 @@ install:
   - mkdir -p ${DEPS_DIR} && cd ${DEPS_DIR}
 
   ############################################################################
+  # Setup default versions and override CXX set by Travis if needed
+  ############################################################################
+  - if [[ "${CC_COMPILER}" != "" ]]; then export CC=${CC_COMPILER}; fi
+  - if [[ "${CXX_COMPILER}" != "" ]]; then export CXX=${CXX_COMPILER}; fi
+  - ${CC} --version
+  - ${CXX} --version
+
+  ############################################################################
   # Install Boost headers
   ############################################################################
   - |
