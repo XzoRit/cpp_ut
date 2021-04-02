@@ -97,18 +97,19 @@ suite ut_exceptions_abort = [] {
 suite ut_param_tests = [] {
     "args"_test = [](const auto &a) { expect(that % a > 0) << "all values are greater than 0"; } | std::vector{1, 2, 3};
 
-    // only with c++20
-    // "types"_test = []<class T> {
-    //   expect(std::is_integral_v<T>) << "type shall be integral type";
-    // }
-    // | std::tuple<bool, int>{};
+    "types"_test = []<class T>
+    {
+        expect(std::is_integral_v<T>) << "type shall be integral type";
+    }
+    | std::tuple<bool, int>{};
 
-    // "args and types"_test = []<class TArg>(TArg arg) {
-    //   !expect(std::is_integral_v<TArg>);
-    //   expect(42_i == arg or true_b == arg);
-    //   expect(type<TArg> == type<int> or type<TArg> == type<bool>);
-    // }
-    // | std::tuple{ true, 42 };
+    "args and types"_test = []<class TArg>(TArg arg)
+    {
+        expect((std::is_integral_v<TArg>) >> fatal);
+        expect(42_i == arg or true == arg);
+        expect(type<TArg> == type<int> or type<TArg> == type<bool>);
+    }
+    | std::tuple{true, 42};
 };
 
 suite ut_log = [] {
