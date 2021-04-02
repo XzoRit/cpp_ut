@@ -23,7 +23,7 @@ suite ut_assertions = [] {
         expect(sum(1) <= 1_i);
     };
 
-    skip | "message"_test = [] { expect(sum(1, 2) == 2_i) << "wrong sum"; };
+    skip / "message"_test = [] { expect(sum(1, 2) == 2_i) << "wrong sum"; };
 
     "that"_test = [] {
         expect(that % 0 == sum());
@@ -54,13 +54,13 @@ suite ut_assertions = [] {
     "fatal"_test = [] {
         std::vector v = {1, 2, 3};
 
-        !expect(v.size() == 3_u);
+        expect((v.size() == 3_u) >> fatal);
         expect(v[0] == 1_i);
         expect(v[1] == 2_i);
         expect(v[2] == 3_i);
     };
 
-    skip | "failure"_test = [] {
+    skip / "failure"_test = [] {
         expect(1_i == 2) << "should fail";
         expect(sum() == 1_i or 2_i == sum()) << "sum?";
     };
@@ -69,14 +69,14 @@ suite ut_assertions = [] {
 suite ut_sections = [] {
     std::vector<int> v(5);
 
-    !expect(std::size(v) == 5_u);
+    expect((std::size(v) == 5_u) >> fatal);
 
     "resize bigger"_test = [v]() {
         mut(v).resize(10);
         expect(std::size(v) == 10_u);
     };
 
-    !expect(std::size(v) == 5_u);
+    expect((std::size(v) == 5_u) >> fatal);
 
     "resize smaller"_test = [v]() {
         mut(v).resize(0);
@@ -91,7 +91,7 @@ suite ut_exceptions_abort = [] {
         expect(nothrow([] {})) << "does not throw";
     };
 
-    skip | "aborts"_test = [] { expect(aborts([] { assert(false); })); };
+    skip / "aborts"_test = [] { expect(aborts([] { assert(false); })); };
 };
 
 suite ut_param_tests = [] {
@@ -112,14 +112,14 @@ suite ut_param_tests = [] {
 };
 
 suite ut_log = [] {
-    skip | "log"_test = [] {
+    skip / "log"_test = [] {
         log << "pre";
         expect(1_i == 2) << "check log messages";
         log << "post";
     };
 };
 
-suite ut_skip_tests = [] { skip | "skip this test"_test = [] { expect(42_i == 43) << "should not fire"; }; };
+suite ut_skip_tests = [] { skip / "skip this test"_test = [] { expect(42_i == 43) << "should not fire"; }; };
 
 suite ut_matcher = [] {
     constexpr auto is_between = [](auto a, auto b) {
