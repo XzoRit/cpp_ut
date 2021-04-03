@@ -106,7 +106,7 @@ suite ut_param_tests = [] {
     "args and types"_test = []<class TArg>(TArg arg)
     {
         expect((std::is_integral_v<TArg>) >> fatal);
-        expect(42_i == arg or true == arg);
+        expect(42_i == arg or _b(true) == arg);
         expect(type<TArg> == type<int> or type<TArg> == type<bool>);
     }
     | std::tuple{true, 42};
@@ -120,7 +120,12 @@ suite ut_log = [] {
     };
 };
 
-suite ut_skip_tests = [] { skip / "skip this test"_test = [] { expect(42_i == 43) << "should not fire"; }; };
+suite ut_skip_tests = [] {
+    skip / "skip this test"_test = [] { expect(42_i == 43) << "should not fire"; };
+    tag("slow") / "very slow test"_test = [] { expect(1_i == 2); };
+    tag("nightly") / "fails at midnight"_test = [] { expect(1_i == 2); };
+    tag("slow") / tag("nightly") / "very slow test at night"_test = [] { expect(1_i == 2); };
+};
 
 suite ut_matcher = [] {
     constexpr auto is_between = [](auto a, auto b) {
