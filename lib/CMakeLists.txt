@@ -34,4 +34,4 @@ target_link_libraries(
     ut
 )
 
-add_test(NAME lib::test COMMAND lib_test)
+add_test(NAME lib::test COMMAND lib_test "*" "" "" "")
